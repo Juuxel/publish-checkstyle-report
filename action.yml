@@ -7,3 +7,6 @@ inputs:
 runs:
   using: node16
   main: index.js
+branding:
+  color: yellow
+  icon: check-square
