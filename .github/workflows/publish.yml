@@ -1,0 +1,31 @@
+on:
+  push:
+    branches: [main]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current time
+        uses: 1466587594/get-current-time@v2
+        id: current-time
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Build with NPM
+        id: build
+        run: |
+          npm ci
+          npm run build
+          echo "::set-output name=package::$(cat package.json)"
+      - name: Commit
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Build ${{ steps.current-time.outputs.time }}
+          file_pattern: dist/index.js node_modules
+          add_options: '-u -f'
+          branch: dist
+          create_branch: true
+          tagging_message: v${{ fromJSON(steps.build.outputs.package).version }}
