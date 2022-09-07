@@ -19,7 +19,7 @@ jobs:
         run: |
           npm ci
           npm run build
-          echo "::set-output name=package::$(cat package.json)"
+          echo "::set-output name=version::$(cat package.json | jq '.version')"
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
@@ -28,4 +28,4 @@ jobs:
           add_options: '-u -f'
           branch: dist
           create_branch: true
-          tagging_message: v${{ fromJSON(steps.build.outputs.package).version }}
+          tagging_message: v${{ steps.build.outputs.version }}
