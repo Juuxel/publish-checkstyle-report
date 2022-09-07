@@ -20,6 +20,7 @@ export type File = {
 
 export type Error = {
     line: number,
+    column: number | null,
     severity: SeverityLevel,
     message: string
 }
@@ -35,7 +36,9 @@ export function readFiles(xml: string): File[] {
             const line = Number.parseInt(errorXml.attr["line"]);
             const severity = errorXml.attr["severity"] as SeverityLevel;
             const message = errorXml.attr["message"];
-            return { line, severity, message }
+            const columnAttr = errorXml.attr["column"];
+            const column = columnAttr != null ? Number.parseInt(columnAttr) : null;
+            return { line, column, severity, message };
         });
 
         files.push({

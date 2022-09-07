@@ -41,6 +41,10 @@ async function main(): Promise<void> {
                 startLine: error.line,
             }
 
+            if (error.column != null) {
+                annotation.startColumn = error.column;
+            }
+
             switch (error.severity) {
                 case checkstyle.SeverityLevel.Error:
                     core.error(error.message, annotation);
