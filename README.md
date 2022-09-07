@@ -1,6 +1,6 @@
 # Publish Checkstyle Report
 
-![Build status](https://img.shields.io/github/workflow/status/Juuxel/publish-checkstyle-report/build?style=flat-square)
+![Build status](https://img.shields.io/github/workflow/status/Juuxel/publish-checkstyle-report/Build?style=flat-square)
 ![License](https://img.shields.io/github/license/Juuxel/publish-checkstyle-report?style=flat-square)
 ![Version](https://img.shields.io/github/v/tag/Juuxel/publish-checkstyle-report?style=flat-square)
 
