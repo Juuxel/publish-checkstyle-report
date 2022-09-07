@@ -1,0 +1,9 @@
+name: "Publish Checkstyle Report"
+description: "Annotates files with Checkstyle log outputs."
+inputs:
+  reports:
+    description: "The glob paths to all report XML files"
+    required: true
+runs:
+  using: node16
+  main: index.js
