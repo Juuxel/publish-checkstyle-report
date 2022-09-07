@@ -19,13 +19,13 @@ jobs:
         run: |
           npm ci
           npm run build
-          echo "::set-output name=version::$(cat package.json | jq '.version')"
+          echo "::set-output name=version::$(cat package.json | jq -r '.version')"
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Build ${{ steps.current-time.outputs.time }}
           file_pattern: dist/index.js node_modules
-          add_options: '-u -f'
+          add_options: '-f'
           branch: dist
           create_branch: true
           tagging_message: v${{ steps.build.outputs.version }}
