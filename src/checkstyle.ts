@@ -40,6 +40,7 @@ export function readFiles(xml: string): File[] {
             const column = columnAttr != null ? Number.parseInt(columnAttr) : null;
             return { line, column, severity, message };
         });
+        console.log("Errors in " + fileName, errors);
 
         files.push({
             name: fileName,
