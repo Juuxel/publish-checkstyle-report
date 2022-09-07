@@ -29,5 +29,6 @@ jobs:
           git add -f .
           git commit --allow-empty -m "Build ${{ github.run_number }}"
           git tag -f -a -m "Build ${{ github.run_number }}" "v${{ steps.build.outputs.version }}"
+          git tag -f -a -m "Build ${{ github.run_number }}" "v$(echo '${{ steps.build.outputs.version }}' | sed 's/\..*$//')"
           git push
           git push --tags --force
