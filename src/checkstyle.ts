@@ -10,19 +10,19 @@ export enum SeverityLevel {
     Ignore = "ignore",
     Info = "info",
     Warning = "warning",
-    Error = "error"
+    Error = "error",
 }
 
-export type File = {
-    name: string,
-    errors: Error[]
+export interface File {
+    name: string;
+    errors: Error[];
 }
 
-export type Error = {
-    line: number,
-    column: number | null,
-    severity: SeverityLevel,
-    message: string
+export interface Error {
+    line: number;
+    column: number | null;
+    severity: SeverityLevel;
+    message: string;
 }
 
 export function readFiles(xml: string): File[] {
@@ -45,9 +45,9 @@ export function readFiles(xml: string): File[] {
             console.log("Errors in " + fileName, errors);
             files.push({
                 name: fileName,
-                errors
+                errors,
             });
         }
-    })
+    });
     return files;
 }

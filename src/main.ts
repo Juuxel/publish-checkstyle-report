@@ -7,13 +7,13 @@
 import * as core from "@actions/core";
 import * as glob from "@actions/glob";
 import * as fs from "fs";
-import {relative} from "path";
+import { relative } from "path";
 import * as process from "process";
 import * as checkstyle from "./checkstyle";
 
 async function main(): Promise<void> {
     core.startGroup("⚙ Setting up");
-    const reports = core.getInput("reports", {required: true});
+    const reports = core.getInput("reports", { required: true });
     core.endGroup();
 
     core.startGroup("📚 Reading reports");
@@ -22,12 +22,8 @@ async function main(): Promise<void> {
     const checkstyleFiles: checkstyle.File[] = [];
 
     for (const filePath of files) {
-        try {
-            const text = fs.readFileSync(filePath, {encoding: 'utf-8'})
-            checkstyleFiles.push(...checkstyle.readFiles(text));
-        } catch (e) {
-            core.error(e);
-        }
+        const text = fs.readFileSync(filePath, { encoding: "utf-8" });
+        checkstyleFiles.push(...checkstyle.readFiles(text));
     }
     core.endGroup();
 
@@ -39,7 +35,7 @@ async function main(): Promise<void> {
             const annotation: core.AnnotationProperties = {
                 file: fileName,
                 startLine: error.line,
-            }
+            };
 
             if (error.column != null) {
                 annotation.startColumn = error.column;
