@@ -1,6 +1,6 @@
 # Publish Checkstyle Report
 
-![Build status](https://img.shields.io/github/workflow/status/Juuxel/publish-checkstyle-report/Build?style=flat-square)
+![Build status](https://img.shields.io/github/actions/workflow/status/Juuxel/publish-checkstyle-report/build.yml?branch=main&style=flat-square)
 ![License](https://img.shields.io/github/license/Juuxel/publish-checkstyle-report?style=flat-square)
 ![Version](https://img.shields.io/github/v/tag/Juuxel/publish-checkstyle-report?style=flat-square)
 
@@ -14,7 +14,7 @@ After the workflow step that runs Checkstyle and produces the report XML files, 
 
 ```yaml
 - name: Publish Checkstyle report
-  uses: Juuxel/publish-checkstyle-report@v1
+  uses: Juuxel/publish-checkstyle-report@v2
   if: ${{ failure() || success() }}
   with:
     # required: The glob paths to report XML files as a multiline string
