@@ -82,6 +82,7 @@ function resolveFiles(report: report.Report): report.File[] {
         if (file.unresolved) {
             const candidates: string[] = [];
             const shortFilePath = file.package ? file.package + "/" + file.name : file.name;
+            console.log("Resolving " + shortFilePath);
 
             for (const srcDir of report.sourceDirectories) {
                 const candidate = srcDir + "/" + shortFilePath;
@@ -105,6 +106,7 @@ function resolveFiles(report: report.Report): report.File[] {
                     }
 
                     // All checks succeeded, add resolved file
+                    console.log("Candidate matched all errors: " + candidate);
                     resolvedFiles.push({
                         name: candidate,
                         package: "",
@@ -115,6 +117,7 @@ function resolveFiles(report: report.Report): report.File[] {
                 }
 
                 // Didn't find a file based on the errors, add first one.
+                console.log("No candidate matched, falling back to first: " + candidates[0]);
                 resolvedFiles.push({
                     name: candidates[0],
                     package: "",
@@ -122,6 +125,7 @@ function resolveFiles(report: report.Report): report.File[] {
                     errors: file.errors,
                 });
             } else if (candidates.length == 1) {
+                console.log("Found single candidate: " + candidates[0]);
                 resolvedFiles.push({
                     name: candidates[0],
                     package: "",
