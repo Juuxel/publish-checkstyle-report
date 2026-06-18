@@ -98,7 +98,12 @@ function resolveFiles(report: report.Report): report.File[] {
                         if (!error.sourceLine) continue; // can't match on undefined
                         if (error.line - 1 >= lines.length) continue outer; // failed match: file too short
                         const lineText = lines[error.line - 1];
-                        if (!lineText.includes(error.sourceLine)) continue outer; // failed match: source line not found
+
+                        // Trim the source line at the end as some rules add whitespace.
+                        // Example: https://github.com/CodeNarc/CodeNarc/blob/3959ad415e37c1079289a6c4cfc1b3bd327daf97/src/main/groovy/org/codenarc/rule/unnecessary/UnnecessarySemicolonRule.groovy#L70
+                        const trimmedSourceLine = error.sourceLine.trimEnd();
+
+                        if (!lineText.includes(trimmedSourceLine)) continue outer; // failed match: source line not found
                     }
 
                     // All checks succeeded, add resolved file
