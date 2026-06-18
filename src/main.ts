@@ -9,7 +9,7 @@ import * as glob from "@actions/glob";
 import * as fs from "fs";
 import { relative } from "path";
 import * as process from "process";
-import * as checkstyle from "./checkstyle.js";
+import * as report from "./report.js";
 
 async function main(): Promise<void> {
     core.startGroup("⚙ Setting up");
@@ -19,16 +19,24 @@ async function main(): Promise<void> {
     core.startGroup("📚 Reading reports");
     const globber = await glob.create(reports);
     const files = await globber.glob();
-    const checkstyleFiles: checkstyle.File[] = [];
+    const readReports: report.Report[] = [];
 
     for (const filePath of files) {
         const text = fs.readFileSync(filePath, { encoding: "utf-8" });
-        checkstyleFiles.push(...checkstyle.readFiles(text));
+        readReports.push(report.readReport(text));
+    }
+    core.endGroup();
+
+    core.startGroup("📑 Resolving files");
+    const reportFiles: report.File[] = [];
+
+    for (const report of readReports) {
+        reportFiles.push(...resolveFiles(report));
     }
     core.endGroup();
 
     core.startGroup("✏ Annotating files");
-    for (const file of checkstyleFiles) {
+    for (const file of reportFiles) {
         const fileName = relativise(file.name);
 
         for (const error of file.errors) {
@@ -41,20 +49,94 @@ async function main(): Promise<void> {
                 annotation.startColumn = error.column;
             }
 
+            let message = error.message;
+
+            if (error.priority != null) {
+                message += " (priority " + error.priority + ")";
+            }
+
+            if (error.ruleDescription) {
+                message += "\n\n>[!NOTE]\n>" + error.ruleDescription;
+            }
+
             switch (error.severity) {
-                case checkstyle.SeverityLevel.Error:
+                case report.SeverityLevel.Error:
                     core.error(error.message, annotation);
                     break;
-                case checkstyle.SeverityLevel.Warning:
+                case report.SeverityLevel.Warning:
                     core.warning(error.message, annotation);
                     break;
-                case checkstyle.SeverityLevel.Info:
+                case report.SeverityLevel.Info:
                     core.notice(error.message, annotation);
                     break;
             }
         }
     }
     core.endGroup();
+}
+
+function resolveFiles(report: report.Report): report.File[] {
+    const resolvedFiles: report.File[] = [];
+
+    fileLoop: for (const file of report.files) {
+        if (file.unresolved) {
+            const candidates: string[] = [];
+            const shortFilePath = file.package ? file.package + "/" + file.name : file.name;
+
+            for (const srcDir of report.sourceDirectories) {
+                const candidate = srcDir + "/" + shortFilePath;
+
+                if (fs.existsSync(candidate)) {
+                    candidates.push(candidate);
+                }
+            }
+
+            if (candidates.length > 1) {
+                // Try to find the correct file based on the errors.
+                outer: for (const candidate of candidates) {
+                    const fileContents = fs.readFileSync(candidate, { encoding: "utf-8" });
+                    const lines = fileContents.split("\n");
+
+                    for (const error of file.errors) {
+                        if (!error.sourceLine) continue; // can't match on undefined
+                        if (error.line - 1 >= lines.length) continue outer; // failed match: file too short
+                        const lineText = lines[error.line - 1];
+                        if (!lineText.includes(error.sourceLine)) continue outer; // failed match: source line not found
+                    }
+
+                    // All checks succeeded, add resolved file
+                    resolvedFiles.push({
+                        name: candidate,
+                        package: "",
+                        unresolved: false,
+                        errors: file.errors,
+                    });
+                    continue fileLoop;
+                }
+
+                // Didn't find a file based on the errors, add first one.
+                resolvedFiles.push({
+                    name: candidates[0],
+                    package: "",
+                    unresolved: false,
+                    errors: file.errors,
+                });
+            } else if (candidates.length == 1) {
+                resolvedFiles.push({
+                    name: candidates[0],
+                    package: "",
+                    unresolved: false,
+                    errors: file.errors,
+                });
+            } else {
+                console.log("Could not resolve file " + shortFilePath);
+            }
+        } else {
+            resolvedFiles.push(file);
+        }
+    }
+
+    return resolvedFiles;
 }
 
 function relativise(path: string): string {
