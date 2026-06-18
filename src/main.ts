@@ -56,7 +56,7 @@ async function main(): Promise<void> {
             }
 
             if (error.ruleDescription) {
-                message += "\n\n>[!NOTE]\n>" + error.ruleDescription;
+                message += "\n\n> [!NOTE]\n> " + error.ruleDescription;
             }
 
             switch (error.severity) {
