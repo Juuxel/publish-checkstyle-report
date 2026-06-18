@@ -85,7 +85,6 @@ export function readReport(xml: string): Report {
                 const errors: Error[] = [];
 
                 for (const violation of file.childrenNamed("Violation")) {
-                    const ruleName = violation.attr["ruleName"];
                     const priority = violation.attr["priority"];
                     const line = Number.parseInt(violation.attr["lineNumber"]);
                     const sourceLine = violation.childNamed("SourceLine")?.val;
