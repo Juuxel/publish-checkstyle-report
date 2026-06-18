@@ -9,7 +9,7 @@ import * as glob from "@actions/glob";
 import * as fs from "fs";
 import { relative } from "path";
 import * as process from "process";
-import * as checkstyle from "./checkstyle";
+import * as checkstyle from "./checkstyle.js";
 
 async function main(): Promise<void> {
     core.startGroup("⚙ Setting up");

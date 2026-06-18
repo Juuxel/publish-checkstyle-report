@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es2016",
+    "target": "es2022",
     "rootDir": "src",
     "outDir": "lib",
-    "moduleResolution": "node",
-    "module": "ES6",
-    "strict": true
+    "moduleResolution": "nodenext",
+    "module": "nodenext",
+    "strict": true,
+    "types": ["node", "xmldoc"]
   }
 }
