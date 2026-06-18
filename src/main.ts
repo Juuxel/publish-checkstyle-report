@@ -61,13 +61,13 @@ async function main(): Promise<void> {
 
             switch (error.severity) {
                 case report.SeverityLevel.Error:
-                    core.error(error.message, annotation);
+                    core.error(message, annotation);
                     break;
                 case report.SeverityLevel.Warning:
-                    core.warning(error.message, annotation);
+                    core.warning(message, annotation);
                     break;
                 case report.SeverityLevel.Info:
-                    core.notice(error.message, annotation);
+                    core.notice(message, annotation);
                     break;
             }
         }

@@ -40,7 +40,7 @@ export function readReport(xml: string): Report {
     const sourceDirectories: Set<string> = new Set();
     const doc = new XmlDocument(xml);
 
-    if (doc.name == 'checkstyle') {
+    if (doc.name == "checkstyle") {
         doc.eachChild(child => {
             if (child.name != "file") return;
 
@@ -51,20 +51,28 @@ export function readReport(xml: string): Report {
                 const message = errorXml.attr["message"];
                 const columnAttr = errorXml.attr["column"];
                 const column = columnAttr != null ? Number.parseInt(columnAttr) : null;
-                return { line, column, severity, message, priority: null, ruleDescription: undefined, sourceLine: undefined };
+                return {
+                    line,
+                    column,
+                    severity,
+                    message,
+                    priority: null,
+                    ruleDescription: undefined,
+                    sourceLine: undefined,
+                };
             });
 
             if (errors.length > 0) {
                 console.log("Errors in " + fileName, errors);
                 files.push({
                     name: fileName,
-                    package: '',
+                    package: "",
                     errors,
                     unresolved: false,
                 });
             }
         });
-    } else if (doc.name == 'CodeNarc') {
+    } else if (doc.name == "CodeNarc") {
         const rules: Map<string, string> = new Map();
 
         for (const project of doc.childrenNamed("Project")) {
