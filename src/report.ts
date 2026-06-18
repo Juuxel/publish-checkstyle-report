@@ -26,7 +26,6 @@ export interface Error {
     severity: SeverityLevel; // Checkstyle severity
     priority: string | null; // CodeNarc priority
     message: string;
-    ruleDescription: string | undefined;
     sourceLine: string | undefined;
 }
 
@@ -57,7 +56,6 @@ export function readReport(xml: string): Report {
                     severity,
                     message,
                     priority: null,
-                    ruleDescription: undefined,
                     sourceLine: undefined,
                 };
             });
@@ -73,19 +71,9 @@ export function readReport(xml: string): Report {
             }
         });
     } else if (doc.name == "CodeNarc") {
-        const rules: Map<string, string> = new Map();
-
         for (const project of doc.childrenNamed("Project")) {
             for (const dir of project.childrenNamed("SourceDirectory")) {
                 sourceDirectories.add(dir.val);
-            }
-        }
-
-        for (const rulesXml of doc.childrenNamed("Rules")) {
-            for (const rule of rulesXml.childrenNamed("Rule")) {
-                const name = rule.attr["name"];
-                const description = rule.childNamed("Description")!.val;
-                rules.set(name, description);
             }
         }
 
@@ -98,14 +86,12 @@ export function readReport(xml: string): Report {
 
                 for (const violation of file.childrenNamed("Violation")) {
                     const ruleName = violation.attr["ruleName"];
-                    const ruleDescription = rules.get(ruleName);
                     const priority = violation.attr["priority"];
                     const line = Number.parseInt(violation.attr["lineNumber"]);
                     const sourceLine = violation.childNamed("SourceLine")?.val;
                     const message = violation.childNamed("Message")!.val;
 
                     errors.push({
-                        ruleDescription,
                         priority,
                         line,
                         sourceLine,
