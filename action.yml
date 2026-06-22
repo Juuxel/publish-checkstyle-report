@@ -1,5 +1,5 @@
-name: "Publish Checkstyle Report"
-description: "Annotates files with Checkstyle log outputs."
+name: "Publish Checkstyle/CodeNarc Report"
+description: "Annotates files with Checkstyle or CodeNarc log outputs."
 inputs:
   reports:
     description: "The glob paths to all report XML files"
