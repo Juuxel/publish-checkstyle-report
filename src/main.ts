@@ -55,6 +55,10 @@ async function main(): Promise<void> {
                 message += " (priority " + error.priority + ")";
             }
 
+            if (error.ruleDescription) {
+                message += "\n\n" + error.ruleDescription;
+            }
+
             switch (error.severity) {
                 case report.SeverityLevel.Error:
                     core.error(message, annotation);
