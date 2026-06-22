@@ -36,6 +36,7 @@ After the workflow step that runs Checkstyle and produces the report XML files, 
 ### CodeNarc
 
 After the workflow step that runs CodeNarc and produces the report XML files, add this action:
+
 ```yaml
 - name: Publish CodeNarc report
   uses: Juuxel/publish-checkstyle-report@v3
